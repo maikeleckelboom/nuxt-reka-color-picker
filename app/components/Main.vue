@@ -7,7 +7,7 @@ const color = ref(srgbColor)
 </script>
 
 <template>
-  <div class="max-w-md py-4 mx-auto w-full flex flex-col">
+  <div class="max-w-md p-4 mx-auto w-full flex flex-col">
     <ColorMode/>
     <ColorPicker v-model="color">
       <ColorPickerContent/>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import {watchPostEffect} from "vue";
+import {useTemplateRef, watchPostEffect} from "vue";
 import {injectColorPickerRootContext} from "./color-picker/ColorPickerRoot.vue";
-import {useEventListener, useMounted} from "@vueuse/core";
+import {useEventListener, useMounted, useWindowSize} from "@vueuse/core";
 import Color from "colorjs.io";
 
 const context = injectColorPickerRootContext()
@@ -17,8 +17,11 @@ function getCanvasContext() {
 }
 
 function updateCanvasColor(ctx: CanvasRenderingContext2D) {
-  const width = ctx.canvas.width;
-  const height = ctx.canvas.height;
+  const pixelRatio = window.devicePixelRatio || 1;
+
+  const width = ctx.canvas.width = canvas.value?.clientWidth! * pixelRatio;
+  const height = ctx.canvas.height = canvas.value?.clientHeight! * pixelRatio;
+
 
   // Get current hue from HSV color
   const hsvColor = context.color.value.to('hsv');
@@ -49,23 +52,28 @@ function updateCanvasColor(ctx: CanvasRenderingContext2D) {
   const markerY = (1 - currentV / 100) * height;
 
   ctx.beginPath();
-  ctx.arc(markerX, markerY, 5, 0, 2 * Math.PI);
+  ctx.arc(markerX, markerY, 8, 0, Math.PI * 2);
   ctx.fillStyle = '#ffffff';
   ctx.strokeStyle = '#000000';
   ctx.lineWidth = 2;
-  ctx.fill();
   ctx.stroke();
+  ctx.fill();
 }
+
+const canvasContainer = useTemplateRef<HTMLDivElement>('canvasContainer')
+
+const hue = computed(() => context.color.value.to('hsv').coords[0])
 
 watchPostEffect(() => {
   const colorContext = getCanvasContext()
   updateCanvasColor(colorContext);
 })
 
-const isMounted = useMounted()
-const container = useTemplateRef<HTMLDivElement>('container')
-
-const hue = computed(() => context.color.value.to('hsv').coords[0])
+const {width} = useWindowSize()
+watch(width, () => {
+  const colorContext = getCanvasContext()
+  updateCanvasColor(colorContext);
+}, {flush: 'post'})
 
 function updateColorFromPosition(x: number, y: number) {
   const canvasEl = canvas.value;
@@ -77,7 +85,7 @@ function updateColorFromPosition(x: number, y: number) {
   const saturation = clamp((x - rect.left) / width, 0, 1) * 100;
   const value = 100 - clamp((y - rect.top) / height, 0, 1) * 100;
 
-  context.modelValue.value = new Color('hsv', [hue.value, saturation, value]);
+  context.modelValue.value = new Color('hsv', [hue.value, saturation, value]).to(context.spaceId.value)
 }
 
 const isDragging = shallowRef<boolean>(false)
@@ -87,39 +95,51 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(value, max));
 }
 
-const stop = useEventListener(
-    container,
-    'pointerdown',
-    onPressed,
-    {capture: true}
-)
+useEventListener(canvasContainer, 'pointerdown', onPressed, {passive: true})
 
 function onPressed(event: PointerEvent) {
+  const container = canvasContainer.value
+  if (!container) return
+
+  container.setPointerCapture(event.pointerId)
   isDragging.value = true
-  const parent = container.value as HTMLElement
-  parent.setPointerCapture(event.pointerId)
 
   updateColorFromPosition(event.clientX, event.clientY)
 
-  const cleanupMv = useEventListener('pointermove', (event) => {
+  const stopPointermove = useEventListener('pointermove', (event) => {
+
     updateColorFromPosition(event.clientX, event.clientY)
 
-    const cleanupPu = useEventListener('pointerup', () => {
+    const stopPointerup = useEventListener('pointerup', () => {
       isDragging.value = false
-      parent.releasePointerCapture(event.pointerId)
-      cleanupMv()
+      container.releasePointerCapture(event.pointerId)
+      stopPointermove()
+    }, {once: true})
+
+    useEventListener('pointercancel', () => {
+      isDragging.value = false
+      container.releasePointerCapture(event.pointerId)
+      stopPointermove()
+      stopPointerup()
     }, {once: true})
 
   }, {passive: true})
 }
+
+const isMounted = useMounted()
+
+
 </script>
 
 <template>
-  <div ref="container" class="relative  w-fit h-56 ">
-    <!--    <div v-if="!isMounted"-->
-    <!--         :style="{ background: context.color.value.toString() }"-->
-    <!--         class="absolute inset-0 size-full"-->
-    <!--    />-->
+  <div ref="canvasContainer"
+       class="relative w-fit h-56 overflow-clip touch-none">
+    <template v-if="!isMounted">
+      <div
+          :style="{'--hue': hue}"
+          class=" size-full bg-[linear-gradient(to_bottom,_rgba(0,0,0,0),_rgba(0,0,0,1)),_linear-gradient(to_right,_hsl(var(--hue),0%,100%),_hsl(var(--hue),100%,50%))]"
+      />
+    </template>
     <canvas
         ref="canvas"
         class="size-full"
