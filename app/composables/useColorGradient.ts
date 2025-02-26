@@ -1,6 +1,6 @@
-import type { SpaceId } from "~/types/colorSpace";
 import type { CoordMeta, Coords } from "colorjs.io";
 import Color from "colorjs.io";
+import type {SpaceId} from "~/components/color-picker/space";
 
 export interface ColorCoordMeta {
   id: string

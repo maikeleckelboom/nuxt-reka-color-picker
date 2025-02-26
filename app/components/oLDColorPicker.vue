@@ -7,6 +7,7 @@ import {useColorSpace} from "~/composables/useColorSpace";
 import {useColorPicker} from "~/composables/useColorPicker";
 import {useColorGradient} from "~/composables/useColorGradient";
 import ColorPickerRoot from "~/components/color-picker/ColorPickerRoot.vue";
+import ColorSlider from "~/components/color-picker/ColorSlider.vue";
 
 // Model Value
 const modelValue = defineModel<Color>("modelValue", {required: true});
@@ -37,12 +38,16 @@ const {serializedColor, formats} = useColorDisplay(color, space, config);
 </script>
 
 <template>
-  <ColorPickerRoot>
+  <ColorPickerRoot v-model="color">
     <div class="mx-auto grid w-full max-w-md gap-6 p-4">
-      <div
-          :style="{ background: color.display() + '' }"
-          class="flex h-16 w-full rounded-md"
-      ></div>
+
+      <ColorArea
+          v-model="color"
+          :space-id="spaceId"
+          :coords="coords"
+          :coords-meta="coordsMeta"
+      />
+
       <div v-for="(meta, index) in coordsMeta" class="space-y-2">
         <div class="grid grid-cols-[1fr,auto]">
           <label

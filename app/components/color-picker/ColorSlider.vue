@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, type HTMLAttributes } from 'vue'
+import { useId, computed, type HTMLAttributes } from 'vue'
 import type { SliderRootEmits, SliderRootProps } from 'reka-ui'
 import {
   SliderRange,
@@ -35,7 +35,7 @@ const uuid = useId()
     v-bind="forwarded"
   >
     <SliderTrack
-      :id="`clr-slider-track-${uuid}`"
+      :id="`color-slider-track-${uuid}`"
       :style="{ '--stops': Array.isArray(props.stops) ? props.stops.join(', ') : props.stops }"
       class="relative h-5 w-full grow overflow-hidden rounded-full"
     >
@@ -63,7 +63,7 @@ const uuid = useId()
   initial-value: 'transparent';
 }
 
-[id^='clr-slider-track-'] {
+[id^='color-slider-track-'] {
   background: linear-gradient(to right, var(--stops));
   @apply border border-input;
 }

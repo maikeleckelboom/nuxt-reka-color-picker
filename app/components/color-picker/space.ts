@@ -10,7 +10,7 @@ let colorSpaceCache = new Map<string, ColorSpace>()
 
 export function listColorSpaces(): ColorSpaceItem[] {
   if (colorSpaceCache.size === 0) {
-    // @ts-ignore
+    // @ts-expect-error internal API
     Color.Space.all.forEach((space: ColorSpace) => {
       colorSpaceCache.set(space.id, space)
     })

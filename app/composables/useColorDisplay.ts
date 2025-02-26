@@ -1,11 +1,11 @@
 import Color from "colorjs.io";
 import type {ColorSpace} from "colorjs.io/fn";
-import type {ColorPickerConfig} from "~/composables/useColorPicker";
+import type {ColorPickerOptions} from "~/components/color-picker/ColorPickerRoot.vue";
 
 export function useColorDisplay(
     color: Ref<Color>,
     space: Ref<ColorSpace>,
-    config: Ref<ColorPickerConfig>
+    options: Ref<ColorPickerOptions>
 ) {
     const formats = computed<string[]>(() => {
         const formats = space.value.formats
@@ -13,17 +13,18 @@ export function useColorDisplay(
     })
 
     const serializedColor = computed(() =>
-        color.value
-            .display({
-                precision: config.value.precision,
-                format: config.value.format,
-                inGamut: config.value.inGamut
-            })
+        color.value.display({
+                precision: options.value.precision,
+                format: options.value.format,
+                inGamut: options.value.inGamut
+        }).toString()
     )
 
-    const displayColor = computed(() => {
-        return serializedColor.value + ''
-    })
+    watch(formats, (v) => {
+        const [first] = v as [string, ...string[]]
+        options.value.format = first
+    }, {immediate: true})
 
-    return {formats, serializedColor,displayColor}
+
+    return {formats, serializedColor}
 }

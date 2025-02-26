@@ -1,7 +1,7 @@
 import Color from "colorjs.io";
 import type {   Ref } from "vue";
 import { ColorSpace } from "colorjs.io/fn";
-import type {SpaceId} from "~/components/utils";
+import type {SpaceId} from "~/components/color-picker/space";
 
 export function useColorSpace(modelValue: Ref<Color>) {
   const spaceId = computed<SpaceId>({

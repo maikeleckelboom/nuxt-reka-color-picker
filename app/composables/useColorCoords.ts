@@ -1,6 +1,6 @@
 import Color, { type Coords } from "colorjs.io";
 import type { ColorCoordMeta } from "~/composables/useColorGradient";
-import type {SpaceId} from "~/components/utils";
+import type {SpaceId} from "~/components/color-picker/space";
 
 export function useColorCoords(spaceId: Ref<SpaceId>, modelValue: Ref<Color>) {
   const coords = computed<Coords>(() => modelValue.value.coords);

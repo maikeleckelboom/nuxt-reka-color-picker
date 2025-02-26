@@ -1,26 +1,21 @@
 <script lang="ts" setup>
 import {cn} from "~~/layers/ui/lib/utils";
+import {injectColorPickerRootContext} from "~/components/color-picker/ColorPickerRoot.vue";
 
-const {formats} = defineProps<{ formats: string[] }>()
+const context = injectColorPickerRootContext()
 
-const format = defineModel<string>('modelValue', {
-  required: false
-})
+if (!context) {
+  throw new Error('ColorPickerRoot not found')
+}
 
-watch(
-    () => formats,
-    (updatedFormats) => {
-      if (import.meta.server) return
-      const [firstFormat] = updatedFormats
-      if (!firstFormat) return
-      format.value = firstFormat
-    },
-    {immediate: true}
-)
+const {options} = context
 </script>
 
 <template>
-  <Select :model-value="format" @update:model-value="format = $event">
+  <Select :model-value="options.format"
+          class="w-full"
+          @update:model-value="options.format = $event as string "
+  >
     <SelectTrigger
         :class="
         cn(
@@ -32,7 +27,7 @@ watch(
     </SelectTrigger>
     <SelectContent>
       <SelectGroup>
-        <SelectItem v-for="format in formats" :key="format" :value="format">
+        <SelectItem v-for="format in context.formats.value" :key="format" :value="format">
           {{ format }}
         </SelectItem>
       </SelectGroup>
