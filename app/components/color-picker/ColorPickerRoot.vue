@@ -11,6 +11,15 @@ export interface ColorPickerOptions {
   inGamut?: boolean;
 }
 
+export interface ColorCoordMeta {
+  id: string
+  name: string
+  isHue: boolean
+  min: number
+  max: number
+  step: number
+}
+
 export interface ColorPickerRootProps extends PrimitiveProps {
   modelValue: Color
 }
@@ -45,6 +54,7 @@ import {Primitive, useForwardExpose} from 'reka-ui'
 import {useColorSpace} from "~/composables/useColorSpace";
 import {useColorGradient} from "~/composables/useColorGradient";
 import {useColorDisplay} from "~/composables/useColorDisplay";
+import {useColorCoords} from "~/composables/useColorCoords";
 
 const props = withDefaults(defineProps<ColorPickerRootProps>(), {
   as: 'span',
@@ -54,11 +64,11 @@ const emit = defineEmits<ColorPickerRootEmits>();
 
 useForwardExpose()
 
-const modelValue = useVModel(props, 'modelValue', emit);
+const opaqueValue = useVModel(props, 'modelValue', emit);
 
-const {spaceId, space} = useColorSpace(modelValue);
+const {spaceId, space} = useColorSpace(opaqueValue);
 
-const {coords, coordsMeta, updateCoord} = useColorCoords(spaceId, modelValue);
+const {coords, coordsMeta, updateCoord} = useColorCoords(spaceId, opaqueValue);
 
 const alpha = ref<number>(100);
 
@@ -66,18 +76,18 @@ const color = computed(
     () => new Color(spaceId.value, coords.value, alpha.value / 100),
 );
 
-const {gradientStops} = useColorGradient(spaceId, coords, alpha, coordsMeta);
+const gradientStops = useColorGradient(spaceId, coords, alpha, coordsMeta);
 
-const serializeOptions = ref<ColorPickerOptions>({
+const options = ref<ColorPickerOptions>({
   format: undefined,
   inGamut: false,
   precision: 5,
 })
 
-const {serializedColor, formats} = useColorDisplay(color, space, serializeOptions);
+const {serializedColor, formats} = useColorDisplay(color, space, options);
 
 provideColorPickerRootContext({
-  modelValue,
+  modelValue:opaqueValue,
   color,
   spaceId,
   space,
@@ -87,7 +97,7 @@ provideColorPickerRootContext({
   gradientStops,
   serializedColor,
   formats,
-  options: serializeOptions,
+  options,
   alpha
 })
 </script>

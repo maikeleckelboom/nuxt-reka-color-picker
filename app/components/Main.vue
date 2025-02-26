@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import Color from 'colorjs.io'
 
-const srgbColor = new Color(Color.Space.get('srgb'), [0.5, 0.5, 0.5])
+const srgbColor = new Color(Color.Space.get('srgb'), [0.2, 0.5, 0.85])
 
 const color = ref(srgbColor)
 </script>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import {injectColorPickerRootContext} from "~/components/color-picker/ColorPickerRoot.vue";
 import ColorSlider from "~/components/color-picker/ColorSlider.vue";
 
@@ -20,15 +20,23 @@ const {
 <template>
   <div>
     <ColorArea/>
-
     <ColorSpaceSelect/>
     <ColorFormatSelect/>
+    <div>
+      <Label for="precision">
+        Precision
+      </Label>
+      <Input id="precision" v-model="context.options.value.precision" :max="18" :min="2" type="number"/>
+    </div>
+    <div>
+      <Label for="color">
+        Color
+      </Label>
+      <Input id="color" :model-value="context.serializedColor.value" readonly/>
+    </div>
     <div v-for="(meta, index) in coordsMeta" class="space-y-2">
-      <div class="grid grid-cols-[1fr,auto]">
-        <label
-            :for="`slider-channel-${index}`"
-            class="text-sm font-semibold tracking-tight"
-        >
+      <div class="grid grid-cols-[1fr,auto] items-end">
+        <label :for="`slider-channel-${index}`">
           {{ meta.name }} ({{ meta.min }}-{{ meta.max }})
         </label>
         <Input
@@ -47,17 +55,16 @@ const {
           :model-value="[coords[index] || 0]"
           :step="meta.step"
           :stops="gradientStops[index]"
-          :style="`--stops: ${gradientStops[index]}`"
           @update:model-value="(v) => updateCoord(index, v)"
       />
     </div>
     <div class="space-y-2">
-      <div class="grid grid-cols-[1fr,auto]">
-        <label class="text-sm font-semibold tracking-tight" for="alpha-slider">
+      <div class="grid grid-cols-[1fr,auto] items-end">
+        <label for="slider-alpha-channel">
           Alpha (0-100)
         </label>
         <Input
-            id="alpha-slider"
+            id="slider-alpha-channel"
             v-model.number="alpha"
             :max="100"
             :min="0"
@@ -71,13 +78,12 @@ const {
           :max="100"
           :min="0"
           :model-value="[alpha]"
-          :style="`--stops: ${gradientStops[coordsMeta.length]}`"
           @update:model-value="(v) => (alpha = v ? v[0]! : 100)"
       />
     </div>
   </div>
 </template>
 
-<style scoped lang="postcss">
+<style lang="postcss" scoped>
 
 </style>

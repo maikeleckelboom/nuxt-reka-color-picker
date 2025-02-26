@@ -12,15 +12,17 @@ export function useColorDisplay(
         return Object.keys(formats).filter((format) => format !== 'keyword')
     })
 
-    const serializedColor = computed(() =>
-        color.value.display({
+    const serializedColor = computed(() => {
+            return color.value.toString({
                 precision: options.value.precision,
                 format: options.value.format,
                 inGamut: options.value.inGamut
-        }).toString()
+            })
+        }
     )
 
     watch(formats, (v) => {
+        if (!v?.length) return
         const [first] = v as [string, ...string[]]
         options.value.format = first
     }, {immediate: true})

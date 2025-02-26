@@ -7,7 +7,6 @@ import {useColorSpace} from "~/composables/useColorSpace";
 import {useColorPicker} from "~/composables/useColorPicker";
 import {useColorGradient} from "~/composables/useColorGradient";
 import ColorPickerRoot from "~/components/color-picker/ColorPickerRoot.vue";
-import ColorSlider from "~/components/color-picker/ColorSlider.vue";
 
 // Model Value
 const modelValue = defineModel<Color>("modelValue", {required: true});
@@ -27,7 +26,7 @@ const color = computed(
 );
 
 // Gradient computation for sliders
-const {gradientStops} = useColorGradient(spaceId, coords, alpha, coordsMeta);
+const gradientStops = useColorGradient(spaceId, coords, alpha, coordsMeta);
 
 // TODO: Move to internal state
 // Format and display logic
@@ -43,9 +42,9 @@ const {serializedColor, formats} = useColorDisplay(color, space, config);
 
       <ColorArea
           v-model="color"
-          :space-id="spaceId"
           :coords="coords"
           :coords-meta="coordsMeta"
+          :space-id="spaceId"
       />
 
       <div v-for="(meta, index) in coordsMeta" class="space-y-2">

@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="checkerboard absolute inset-0 size-full overflow-clip rounded-full" />
+  <div class="checkerboard absolute inset-0 size-full overflow-clip" />
 </template>
 
 <style scoped>

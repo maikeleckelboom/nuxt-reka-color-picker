@@ -1,15 +1,7 @@
 import type { CoordMeta, Coords } from "colorjs.io";
 import Color from "colorjs.io";
 import type {SpaceId} from "~/components/color-picker/space";
-
-export interface ColorCoordMeta {
-  id: string
-  name: string
-  isHue: boolean
-  min: number
-  max: number
-  step: number
-}
+import type {ColorCoordMeta} from "~/components/color-picker/ColorPickerRoot.vue";
 
 export function useColorGradient(
   spaceId: Ref<SpaceId>,
@@ -50,5 +42,5 @@ export function useColorGradient(
       .join(', ')
   }
 
-  return { gradientStops }
+  return gradientStops
 }
