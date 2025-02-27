@@ -17,7 +17,7 @@ function getCanvasContext() {
 }
 
 function updateCanvasColor(ctx: CanvasRenderingContext2D) {
-  const fillStyle = context.color.value.display();
+  const fillStyle = context.pickedColor.value.display();
   ctx.save();
   ctx.globalCompositeOperation = 'copy';
   ctx.fillStyle = fillStyle;
@@ -25,7 +25,7 @@ function updateCanvasColor(ctx: CanvasRenderingContext2D) {
   ctx.restore();
 }
 
-const inGamutSrgbColor = computed(() => context.color.value.to('srgb').toString({inGamut: true}))
+const inGamutSrgbColor = computed(() => context.pickedColor.value.to('srgb').toString({inGamut: true}))
 
 watchPostEffect(() => {
   const colorContext = getCanvasContext()
@@ -38,7 +38,7 @@ const isMounted = useMounted()
 <template>
   <div class="relative w-full h-56">
     <div v-if="!isMounted"
-         :style="{background: context.color.value.toString()}"
+         :style="{background: context.pickedColor.value.toString()}"
          class="absolute inset-0 size-full"
          data-class="ssr-placeholder"
     />

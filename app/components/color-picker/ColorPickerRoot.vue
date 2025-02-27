@@ -26,7 +26,7 @@ export interface ColorPickerRootProps extends PrimitiveProps {
 
 export type ColorPickerRootContext = {
   modelValue: Ref<Color>,
-  color: ComputedRef<Color>,
+  pickedColor: ComputedRef<Color>,
   spaceId: WritableComputedRef<SpaceId>,
   space: ComputedRef<ColorSpace>,
   coords: ComputedRef<Coords>,
@@ -64,15 +64,16 @@ const emit = defineEmits<ColorPickerRootEmits>();
 
 useForwardExpose()
 
-const opaqueValue = useVModel(props, 'modelValue', emit);
+// opaqueValue
+const modelValue = useVModel(props, 'modelValue', emit);
 
-const {spaceId, space} = useColorSpace(opaqueValue);
+const {spaceId, space} = useColorSpace(modelValue);
 
-const {coords, coordsMeta, updateCoord} = useColorCoords(spaceId, opaqueValue);
+const {coords, coordsMeta, updateCoord} = useColorCoords(spaceId, modelValue);
 
 const alpha = ref<number>(100);
 
-const color = computed(
+const pickedColor = computed(
     () => new Color(spaceId.value, coords.value, alpha.value / 100),
 );
 
@@ -84,11 +85,11 @@ const options = ref<ColorPickerOptions>({
   precision: 5,
 })
 
-const {serializedColor, formats} = useColorDisplay(color, space, options);
+const {serializedColor, formats} = useColorDisplay(pickedColor, space, options);
 
 provideColorPickerRootContext({
-  modelValue:opaqueValue,
-  color,
+  modelValue,
+  pickedColor,
   spaceId,
   space,
   coords,

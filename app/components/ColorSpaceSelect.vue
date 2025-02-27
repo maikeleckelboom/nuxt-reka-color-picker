@@ -15,9 +15,12 @@ const model = computed({
 </script>
 
 <template>
-  <Select v-model="model">
+  <Label for="color-space">
+    Space
+  </Label>
+  <Select id="color-space" v-model="model">
     <SelectTrigger>
-      <SelectValue placeholder="Select a color space"/>
+      <SelectValue placeholder="Select a pickedColor space"/>
     </SelectTrigger>
     <SelectContent>
       <SelectItem v-for="item in listColorSpaces()" :key="item.id" :value="item.id">

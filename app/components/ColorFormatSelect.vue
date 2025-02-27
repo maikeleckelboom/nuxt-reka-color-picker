@@ -12,9 +12,14 @@ const {options} = context
 </script>
 
 <template>
-  <Select :model-value="options.format"
-          class="w-full"
-          @update:model-value="options.format = $event as string "
+  <Label for="color-format">
+    Format
+  </Label>
+  <Select
+      id="color-format"
+      :model-value="options.format"
+      class="w-full"
+      @update:model-value="options.format = $event as string "
   >
     <SelectTrigger
         :class="

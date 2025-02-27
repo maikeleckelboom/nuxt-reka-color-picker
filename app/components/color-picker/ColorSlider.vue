@@ -35,7 +35,7 @@ const uuid = useId()
     v-bind="forwarded"
   >
     <SliderTrack
-      :id="`color-slider-track-${uuid}`"
+      :id="`slider-track-${uuid}`"
       :style="{ '--stops': Array.isArray(props.stops) ? props.stops.join(', ') : props.stops }"
       class="relative h-5 w-full grow overflow-hidden rounded-full"
     >
@@ -63,7 +63,7 @@ const uuid = useId()
   initial-value: 'transparent';
 }
 
-[id^='color-slider-track-'] {
+[id^='slider-track-'] {
   background: linear-gradient(to right, var(--stops));
   @apply border border-input;
 }
