@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { cn } from '~~/layers/ui/lib/utils'
-import { DialogDescription, type DialogDescriptionProps, useForwardProps } from 'reka-ui'
+import {
+  DialogDescription,
+  type DialogDescriptionProps,
+  useForwardProps
+} from 'reka-ui'
 import { computed, type HTMLAttributes } from 'vue'
 
-const props = defineProps<DialogDescriptionProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps<
+  DialogDescriptionProps & { class?: HTMLAttributes['class'] }
+>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props
@@ -17,7 +23,7 @@ const forwardedProps = useForwardProps(delegatedProps)
 <template>
   <DialogDescription
     v-bind="forwardedProps"
-    :class="cn('text-sm text-muted-foreground', props.class)"
+    :class="cn('text-muted-foreground text-sm', props.class)"
   >
     <slot />
   </DialogDescription>

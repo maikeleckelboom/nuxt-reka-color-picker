@@ -1,15 +1,22 @@
 <script lang="ts" setup>
-import {Toaster} from "vue-sonner";
+import { Toaster } from 'vue-sonner'
 </script>
 
 <template>
   <div>
-    <div class="z-0 w-full h-max absolute top-0 left-0 inset-0 pointer-events-none flex justify-center overflow-hidden">
-      <div class="w-[108rem] flex-none flex justify-end">
-        <img alt="backdrop" class="w-[90rem] flex-none max-w-none" decoding="async" src="/reku-bg.png">
+    <div
+      class="pointer-events-none absolute inset-0 left-0 top-0 z-0 flex h-max w-full justify-center overflow-hidden"
+    >
+      <div class="flex w-[108rem] flex-none justify-end">
+        <img
+          alt="backdrop"
+          class="w-[90rem] max-w-none flex-none"
+          decoding="async"
+          src="/reku-bg.png"
+        >
       </div>
     </div>
-    <Main/>
-    <Toaster/>
+    <Main />
+    <Toaster />
   </div>
 </template>

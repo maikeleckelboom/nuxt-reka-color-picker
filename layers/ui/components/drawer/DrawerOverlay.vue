@@ -4,7 +4,9 @@ import { cn } from '~~/layers/ui/lib/utils'
 import { DrawerOverlay } from 'vaul-vue'
 import { computed, type HtmlHTMLAttributes } from 'vue'
 
-const props = defineProps<DialogOverlayProps & { class?: HtmlHTMLAttributes['class'] }>()
+const props = defineProps<
+  DialogOverlayProps & { class?: HtmlHTMLAttributes['class'] }
+>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props
@@ -14,5 +16,8 @@ const delegatedProps = computed(() => {
 </script>
 
 <template>
-  <DrawerOverlay v-bind="delegatedProps" :class="cn('fixed inset-0 z-50 bg-black/80', props.class)" />
+  <DrawerOverlay
+    v-bind="delegatedProps"
+    :class="cn('fixed inset-0 z-50 bg-black/80', props.class)"
+  />
 </template>

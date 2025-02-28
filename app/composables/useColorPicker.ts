@@ -1,22 +1,22 @@
-import { useId } from "vue";
+import { useId } from 'vue'
 
 export interface ColorPickerConfig {
-  layout: "standard" | "compact";
-  precision: number;
-  inGamut: boolean;
-  format: string | undefined;
+  layout: 'standard' | 'compact'
+  precision: number
+  inGamut: boolean
+  format: string | undefined
 }
 
 export const useColorPicker = (id?: string) => {
-  if (!id) id = useId();
-  const state = useState<ColorPickerConfig>(id);
+  if (!id) id = useId()
+  const state = useState<ColorPickerConfig>(id)
 
   state.value ??= {
-    layout: "standard",
+    layout: 'standard',
     precision: 5,
     format: undefined,
     inGamut: false
-  };
+  }
 
-  return state;
-};
+  return state
+}

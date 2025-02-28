@@ -6,7 +6,9 @@ import { useForwardPropsEmits } from 'reka-ui'
 import { DrawerContent, DrawerPortal } from 'vaul-vue'
 import DrawerOverlay from './DrawerOverlay.vue'
 
-const props = defineProps<DialogContentProps & { class?: HtmlHTMLAttributes['class'] }>()
+const props = defineProps<
+  DialogContentProps & { class?: HtmlHTMLAttributes['class'] }
+>()
 const emits = defineEmits<DialogContentEmits>()
 
 const forwarded = useForwardPropsEmits(props, emits)
@@ -16,12 +18,15 @@ const forwarded = useForwardPropsEmits(props, emits)
   <DrawerPortal>
     <DrawerOverlay />
     <DrawerContent
-      v-bind="forwarded" :class="cn(
-        'fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background',
-        props.class,
-      )"
+      v-bind="forwarded"
+      :class="
+        cn(
+          'bg-background fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border',
+          props.class
+        )
+      "
     >
-      <div class="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+      <div class="bg-muted mx-auto mt-4 h-2 w-[100px] rounded-full" />
       <slot />
     </DrawerContent>
   </DrawerPortal>

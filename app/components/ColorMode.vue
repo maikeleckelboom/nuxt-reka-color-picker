@@ -7,12 +7,8 @@ const colorMode = useColorMode()
     <DropdownMenuTrigger as-child>
       <Button variant="outline">
         <template v-if="!colorMode.unknown">
-          <template v-if="colorMode.value === 'dark'">
-            Dark Mode
-          </template>
-          <template v-else>
-            Light Mode
-          </template>
+          <template v-if="colorMode.value === 'dark'"> Dark Mode </template>
+          <template v-else> Light Mode </template>
         </template>
         <span class="sr-only">Toggle theme</span>
       </Button>

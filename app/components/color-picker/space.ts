@@ -1,25 +1,45 @@
-import { ColorSpace } from 'colorjs.io/fn'
+import type { ColorSpace } from 'colorjs.io/fn'
 import Color from 'colorjs.io'
 
-export interface ColorSpaceItem {
-  name: string
-  id: string
-}
+// Type for the cache to ensure type safety
+type ColorSpaceCache = Map<ColorSpace['id'], ColorSpace>
 
-let colorSpaceCache = new Map<string, ColorSpace>()
+// Singleton cache instance
+let colorSpaceCache: ColorSpaceCache | null = null
 
-export function listColorSpaces(): ColorSpaceItem[] {
-  if (colorSpaceCache.size === 0) {
-    // @ts-expect-error internal API
-    Color.Space.all.forEach((space: ColorSpace) => {
-      colorSpaceCache.set(space.id, space)
-    })
+// Type derived directly from the ColorSpace
+export type ColorSpaceItem = Pick<ColorSpace, 'name' | 'id'>
+export type SpaceId = ColorSpace['id']
+
+// Initialize cache once
+function initializeCache(): ColorSpaceCache {
+  const cache = new Map<ColorSpace['id'], ColorSpace>()
+
+  try {
+    // Type assertion for internal API access
+    const spaces = (Color.Space as unknown as { all: ColorSpace[] }).all
+
+    for (const space of spaces) {
+      if (space.id && space.name) {
+        cache.set(space.id, space)
+      }
+    }
+  } catch (error) {
+    console.error('Failed to initialize color space cache:', error)
   }
 
-  return Array.from(colorSpaceCache.values()).map((space) => ({
-    name: space.name,
-    id: space.id
-  }))
+  return cache
 }
 
-export type SpaceId = ColorSpace['id']
+// Memoized getter for cache instance
+function getColorSpaceCache(): ColorSpaceCache {
+  if (!colorSpaceCache) {
+    colorSpaceCache = initializeCache()
+  }
+  return colorSpaceCache
+}
+
+export function listColorSpaces(): ColorSpaceItem[] {
+  const cache = getColorSpaceCache()
+  return Array.from(cache.values()).map(({ name, id }) => ({ name, id }))
+}

@@ -1,13 +1,9 @@
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div>
-    <slot></slot>
+    <slot/>
   </div>
 </template>
 
-<style scoped lang="postcss">
-
-</style>
+<style scoped lang="postcss"></style>
