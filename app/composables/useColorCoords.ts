@@ -1,8 +1,8 @@
 import Color, { type CoordMeta, type Coords } from 'colorjs.io'
-import type { SpaceId } from '~/components/color-picker/space'
-import type { ColorCoordMeta } from '~/components/color-picker/ColorPickerRoot.vue'
+import type { SpaceId } from '~/components/color-picker/color-space'
+import type { SliderCoordMeta } from '~/components/color-picker/ColorPickerRoot.vue'
 
-export function createCoordMeta(id: string, meta: CoordMeta): ColorCoordMeta {
+export function createCoordMeta(id: string, meta: CoordMeta): SliderCoordMeta {
   let { name, range } = meta
   // Default name to id if not provided and append "*" if it's only one character long.
   name = name || id
@@ -15,7 +15,7 @@ export function createCoordMeta(id: string, meta: CoordMeta): ColorCoordMeta {
   const [min, max] = range
 
   // Calculate step based on the range and cap it at 1
-  let step = (max - min) / 1000
+  let step = (max - min) / 100
   if (step > 1) step = 1
 
   // Determine if this coordinate represents a hue (special handling)
@@ -24,22 +24,21 @@ export function createCoordMeta(id: string, meta: CoordMeta): ColorCoordMeta {
   return { id, name, isHue, min, max, step }
 }
 
-export function useColorCoords(modelValue: Ref<Color>, spaceId: Ref<SpaceId>) {
+export function useColorCoords(modelValue: Ref<Color>, spaceId?: MaybeRefOrGetter<SpaceId>) {
   const coords = computed<Coords>(() => modelValue.value.coords)
 
-  const coordsMeta = computed<ColorCoordMeta[]>(() => {
-    const space = Color.Space.get(spaceId.value)
-    return Object.entries(space.coords).map(([id, meta]) =>
-      createCoordMeta(id, meta)
-    )
+  const coordsMeta = computed(() => {
+    const spaceIdValue = toValue(spaceId) || modelValue.value.space.id
+    const space = Color.Space.get(spaceIdValue)
+    return Object.entries(space.coords).map(([id, meta]) => createCoordMeta(id, meta))
   })
 
   function updateCoord(index: number, coordValue: number | number[] | undefined) {
-    if (coordValue === undefined) return;
+    if (coordValue === undefined) return
 
     coordValue = Array.isArray(coordValue) ? coordValue : [coordValue]
 
-    if(coordValue){
+    if (coordValue) {
       modelValue.value.coords.splice(index, 1, ...coordValue)
     }
   }

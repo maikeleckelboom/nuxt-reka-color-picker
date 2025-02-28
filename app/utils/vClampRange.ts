@@ -1,12 +1,13 @@
-<script lang="ts" setup>
 import type { Directive } from 'vue'
 
-const vClampRange: Directive<HTMLInputElement> = {
+export const vClampRange: Directive<HTMLInputElement> = {
   mounted(el) {
     const clampValue = () => {
       const value = parseFloat(el.value)
       const minVal = parseFloat(el.min)
       const maxVal = parseFloat(el.max)
+
+      if (isNaN(value)) return
 
       let clamped = value
       if (!isNaN(minVal)) clamped = Math.max(clamped, minVal)
@@ -32,6 +33,8 @@ const vClampRange: Directive<HTMLInputElement> = {
     const minVal = parseFloat(el.min)
     const maxVal = parseFloat(el.max)
 
+    if (isNaN(value)) return
+
     let clamped = value
     if (!isNaN(minVal)) clamped = Math.max(clamped, minVal)
     if (!isNaN(maxVal)) clamped = Math.min(clamped, maxVal)
@@ -47,24 +50,3 @@ const vClampRange: Directive<HTMLInputElement> = {
     }
   }
 }
-
-const { max, min, step, ...restProps } = defineProps<{
-  max: number
-  min: number
-  step: number
-}>()
-
-const modelValue = defineModel<number | undefined>({ required: true })
-</script>
-
-<template>
-  <Input
-    v-clamp-range
-    v-model.number="modelValue"
-    :max="max"
-    :min="min"
-    :step="step"
-    class="font-mono tabular-nums max-w-24"
-    type="number"
-  />
-</template>

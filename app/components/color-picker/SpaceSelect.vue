@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { listColorSpaces } from './space'
+import { listColorSpaces } from './color-space'
 import { injectColorPickerContext } from '~/components/color-picker/ColorPickerRoot.vue'
 
 const context = injectColorPickerContext()
@@ -21,11 +21,7 @@ const model = computed({
       <SelectValue placeholder="Select a pickedColor space" />
     </SelectTrigger>
     <SelectContent>
-      <SelectItem
-        v-for="item in listColorSpaces()"
-        :key="item.id"
-        :value="item.id"
-      >
+      <SelectItem v-for="item in listColorSpaces()" :key="item.id" :value="item.id">
         {{ item.name }}
       </SelectItem>
     </SelectContent>

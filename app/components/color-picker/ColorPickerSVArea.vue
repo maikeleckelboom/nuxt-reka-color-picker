@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { type ShallowRef, useTemplateRef, watchPostEffect } from 'vue'
-import { injectColorPickerContext } from '../ColorPickerRoot.vue'
+import { injectColorPickerContext } from './ColorPickerRoot.vue'
 import { useEventListener, useWindowSize } from '@vueuse/core'
 import Color from 'colorjs.io'
 
@@ -11,12 +11,10 @@ if (!context) throw new Error('ColorPickerRoot not found')
 const container = useTemplateRef<HTMLDivElement>('container')
 
 const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
-
-function getCanvasContext(
-  canvasElementRef: ShallowRef<HTMLCanvasElement | null>
-) {
+function getCanvasContext(canvasElementRef: ShallowRef<HTMLCanvasElement | null>) {
   const context2D = canvasElementRef.value?.getContext('2d', {
-    willReadFrequently: true
+    willReadFrequently: true,
+    colorSpace: 'display-p3'
   })
   if (!context2D) throw new Error('Failed to get canvas context')
   return context2D
@@ -28,25 +26,18 @@ function updateCanvasColor(ctx: CanvasRenderingContext2D) {
   const canvasEl = ctx.canvas
   if (!canvasEl) return
 
+  const { coords } = modelValue.value.to('hsv')
+  if (coords.some(Number.isNaN)) return
+
   const { width, height } = resizeCanvas(canvasEl, ctx)
-
-  const [hue, sValue, vValue] = modelValue.value.to('hsv').coords
-
-  if (Number.isNaN(hue) || Number.isNaN(sValue) || Number.isNaN(vValue)) {
-    return
-  }
+  const [hue, sValue, vValue] = coords
 
   applySaturationGradient(ctx, width, height, hue)
-
   applyValueGradient(ctx, width, height)
-
   drawMarker(ctx, width, height, sValue, vValue)
 }
 
-function resizeCanvas(
-  canvasEl: HTMLCanvasElement,
-  context: CanvasRenderingContext2D
-) {
+function resizeCanvas(canvasEl: HTMLCanvasElement, context: CanvasRenderingContext2D) {
   const { width, height } = canvasEl.getBoundingClientRect()
   const dpr = window.devicePixelRatio || 1
 
@@ -73,11 +64,7 @@ function applySaturationGradient(
   ctx.fillRect(0, 0, width, height)
 }
 
-function applyValueGradient(
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number
-) {
+function applyValueGradient(ctx: CanvasRenderingContext2D, width: number, height: number) {
   const valueGradient = ctx.createLinearGradient(0, 0, 0, height)
   valueGradient.addColorStop(0, 'rgba(0, 0, 0, 0)')
   valueGradient.addColorStop(1, 'rgba(0, 0, 0, 1)')
@@ -104,7 +91,7 @@ function drawMarker(
 
   ctx.beginPath()
   ctx.arc(markerX, markerY, 8, 0, 2 * Math.PI)
-  ctx.strokeStyle = '#2a2d2f'
+  ctx.strokeStyle = '#151414'
   ctx.lineWidth = 2
   ctx.stroke()
 }
@@ -118,10 +105,14 @@ watchPostEffect(() => {
 
 const { width } = useWindowSize()
 
-watch(width, () => {
-  const colorContext = getCanvasContext(canvas)
-  updateCanvasColor(colorContext)
-}, { flush: 'post' })
+watch(
+  width,
+  () => {
+    const colorContext = getCanvasContext(canvas)
+    updateCanvasColor(colorContext)
+  },
+  { flush: 'post' }
+)
 
 function updateColorFromPosition(clientX: number, clientY: number) {
   const canvasEl = canvas.value
@@ -131,7 +122,7 @@ function updateColorFromPosition(clientX: number, clientY: number) {
   const { xRatio, yRatio } = calculateRatios(clientX, clientY, rect)
   const { saturation, value } = convertRatiosToSV(xRatio, yRatio)
   const hsvColor = createHSVColor(hue.value, saturation, value)
-  context.modelValue.value = hsvColor.to(space.value.id, { inGamut: false })
+  context.modelValue.value = hsvColor.to(space.value.id)
 }
 
 function calculateRatios(clientX: number, clientY: number, rect: DOMRect) {
@@ -200,19 +191,14 @@ function handlePointerdown(event: PointerEvent) {
   const stopUp = useEventListener(target, 'pointerup', handleRelease, {
     once: true
   })
-  const stopCancel = useEventListener(
-    target,
-    'pointercancel',
-    handleRelease,
-    { once: true }
-  )
+  const stopCancel = useEventListener(target, 'pointercancel', handleRelease, { once: true })
 }
 </script>
 
 <template>
   <div
     ref="container"
-    class="relative h-full min-h-24 w-full touch-none overflow-clip"
+    class="relative row-span-full h-full min-h-24 w-full touch-none overflow-clip"
   >
     <canvas ref="canvas" class="size-full" />
   </div>

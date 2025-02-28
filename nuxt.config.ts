@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
 
-  modules: ['@nuxtjs/color-mode', '@nuxt/image', '@nuxt/eslint'],
+  modules: ['@nuxtjs/color-mode', '@nuxt/image', '@nuxt/icon'],
 
   image: {},
 

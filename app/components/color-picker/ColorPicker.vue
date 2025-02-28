@@ -13,6 +13,9 @@ const forwarded = useForwardPropsEmits(props, emits)
 
 <template>
   <ColorPickerRoot v-bind="forwarded">
-    <slot />
+    <ColorPickerContent />
+    <ColorPickerSpaceSelect />
+    <ColorPickerSliders />
+    <ColorPickerPalette />
   </ColorPickerRoot>
 </template>
