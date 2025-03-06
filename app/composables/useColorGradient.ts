@@ -9,16 +9,7 @@ export function useColorGradient(
   alpha: Ref<number>,
   coordsMeta: Ref<CoordMeta[]>
 ) {
-  const gradientStops = computed<string[]>(() => {
-    const results = []
-    for (let i = 0; i < coordsMeta.value.length; i++) {
-      results.push(generateCoordGradient(i, coordsMeta.value[i] as ColorCoordMeta))
-    }
-    results.push(generateAlphaGradient())
-    return results
-  })
-
-  const generateCoordGradient = (index: number, meta: ColorCoordMeta) => {
+  const createGradientForCoord = (index: number, meta: ColorCoordMeta) => {
     const { isHue, min, max } = meta
     let start = coords.value.slice() as Coords
     start[index] = min
@@ -42,5 +33,13 @@ export function useColorGradient(
       .join(', ')
   }
 
-  return gradientStops
+  return computed<string[]>(() => {
+    const results = []
+    for (let i = 0; i < coordsMeta.value.length; i++) {
+      results.push(createGradientForCoord(i, coordsMeta.value[i] as ColorCoordMeta))
+    }
+    results.push(generateAlphaGradient())
+    return results
+  })
+
 }

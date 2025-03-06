@@ -77,7 +77,8 @@ function updateColorFromPosition(x: number, y: number) {
   const saturation = clamp((x - rect.left) / width, 0, 1) * 100;
   const value = 100 - clamp((y - rect.top) / height, 0, 1) * 100;
 
-  context.modelValue.value = new Color('hsv', [hue.value, saturation, value]);
+  context.modelValue.value = new Color('hsv', [hue.value, saturation, value])
+      .to((context.space.value.id));
 }
 
 const isDragging = shallowRef<boolean>(false)
