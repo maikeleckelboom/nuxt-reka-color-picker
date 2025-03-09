@@ -10,9 +10,6 @@ const color = ref(srgbColor)
   <div class="max-w-md py-4 mx-auto w-full flex flex-col">
     <ColorMode/>
     <StatelessColorPicker v-model="color"/>
-    <ColorPicker v-model="color">
-      <ColorPickerContent/>
-    </ColorPicker>
   </div>
 </template>
 

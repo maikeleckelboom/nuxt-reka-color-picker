@@ -21,7 +21,7 @@ export function useColorCoords(spaceId: Ref<SpaceId>, modelValue: Ref<Color>) {
     });
 
     function updateCoord(index: number, v: number[] | undefined) {
-        coords.value[index] = v?.[0] ?? 50;
+        coords.value[index] = v?.[0] ?? 0;
     }
 
     return {coords, coordsMeta, updateCoord};

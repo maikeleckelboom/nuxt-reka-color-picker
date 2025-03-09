@@ -8,6 +8,7 @@ import {useColorPicker} from "~/composables/useColorPicker";
 import {useColorGradient} from "~/composables/useColorGradient";
 import ColorPickerRoot from "~/components/color-picker/ColorPickerRoot.vue";
 import ColorSlider from "~/components/color-picker/ColorSlider.vue";
+import {useGamutPaths} from "~/composables/useGamutPaths";
 
 // Model Value
 const modelValue = defineModel<Color>("modelValue", {required: true});
@@ -28,6 +29,8 @@ const color = computed(
 
 // Gradient computation for sliders
 const gradientStops = useColorGradient(spaceId, coords, alpha, coordsMeta);
+
+const gamutHint = shallowRef<string>('srgb');
 
 const config = useColorPicker();
 
@@ -62,7 +65,6 @@ const {serializedColor, formats} = useColorDisplay(color, space, config);
             :model-value="[coords[index] || 0]"
             :step="meta.step"
             :stops="gradientStops[index]"
-            :style="`--stops: ${gradientStops[index]}`"
             @update:model-value="(v) => updateCoord(index, v)"
         />
       </div>
