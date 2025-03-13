@@ -4,6 +4,7 @@ import Color from 'colorjs.io'
 export interface ColorSpaceItem {
   name: string
   id: string
+  space: ColorSpace
 }
 
 let colorSpaceCache = new Map<string, ColorSpace>()
@@ -18,7 +19,8 @@ export function listColorSpaces(): ColorSpaceItem[] {
 
   return Array.from(colorSpaceCache.values()).map((space) => ({
     name: space.name,
-    id: space.id
+    id: space.id,
+    space: space,
   }))
 }
 

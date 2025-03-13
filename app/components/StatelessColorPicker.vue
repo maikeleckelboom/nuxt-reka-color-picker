@@ -24,7 +24,16 @@ const alpha = ref<number>(100);
 
 // Color
 const color = computed(
-    () => new Color(spaceId.value, coords.value, alpha.value / 100),
+    {
+        get: () => {
+          const color = new Color(spaceId.value, coords.value);
+          color.alpha = alpha.value / 100;
+          return color;
+        },
+        set: (value) => {
+          modelValue.value = value;
+        },
+    },
 );
 
 // Gradient computation for sliders
